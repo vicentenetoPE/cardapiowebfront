@@ -14,7 +14,7 @@ function App() {
     socket.on("connect_error", err => console.error("⚡️ erro de conexão", err));
   }, [socket]);
 
-  if(!user || import.meta.env.VITE_AUTH_ENABLED === "true") {
+  if(!user && import.meta.env.VITE_AUTH_ENABLED === "true") {
     return (
       <SignIn />
     );
