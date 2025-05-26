@@ -11,7 +11,15 @@ export const OrderStatus: React.FC<{ status: OrderQueuedInterface['callDriverSta
       <Chip
         label="Sucesso"
         color="success"
-        variant="outlined"
+      />
+    );
+  }
+
+  if (status === "error") {
+    return (
+      <Chip
+        label="Erro"
+        color="error"
       />
     );
   }
@@ -19,8 +27,7 @@ export const OrderStatus: React.FC<{ status: OrderQueuedInterface['callDriverSta
   return (
     <Chip
       label="Cancelado"
-      color="error"
-      variant="outlined"
+      color="warning"
     />
   );
 };

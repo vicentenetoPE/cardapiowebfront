@@ -9,7 +9,6 @@ export const APISwitch = () => {
 
     useEffect(() => {
         socket.on("apiEnabled", (message: { enabled: boolean }) => {
-            console.log("⚡️ status de saúde recebido", message.enabled);
             setEnabled(message.enabled);
         });
         return () => {
@@ -18,7 +17,6 @@ export const APISwitch = () => {
     }, [socket]);
 
     const handleChange = async () => {
-        console.log("Mudando o status da API");
         const res = await httpClient.get("/enableApi");
         if (res.status === 200) {
             setEnabled(res.data.enabled);
