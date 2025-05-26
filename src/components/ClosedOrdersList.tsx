@@ -12,7 +12,6 @@ const ClosedOrdersList: React.FC = () => {
 
   useEffect(() => {
     socket.on("unsucessfulOrder", (message: OrderQueuedInterface[]) => {
-      console.log("🚀 ~ file: ClosedOrdersList.tsx:12 ~ ClosedOrdersList ~ message:", message);
       setOrders(message.reverse());
     });
 

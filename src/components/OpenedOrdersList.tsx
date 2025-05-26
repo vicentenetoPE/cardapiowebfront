@@ -25,6 +25,7 @@ export const OpenedOrdersList: React.FC = () => {
 
   useEffect(() => {
     socket.on("new_order", (message: OrderQueuedInterface[]) => {
+      console.log("new_order", message);
       setOrders(message.reverse());
     });
 
@@ -84,15 +85,17 @@ export const OpenedOrdersList: React.FC = () => {
       {orders.length ? (
         <ul className="space-y-3 overflow-y-auto max-h-[calc(100vh-200px)]">
           {orders.map((order) => (
-            <li key={order.id} className="flex items-center justify-between bg-white border-l-4 border-green-600 p-4 rounded shadow">
-              <div>
+            <li key={order.id} className="flex flex-col md:flex-row gap-4 items-center justify-between bg-white border-l-4 border-green-600 p-4 rounded shadow">
+              <div className="w-full md:w-auto">
                 <span className="block font-semibold text-red-700">{order.customer?.name} <span className="text-blue-700">- R$ {order.total}</span></span>
+                <div className="flex md:flex-col justify-between md:justifiy-start">
                 <span className="block text-sm text-gray-600">
                   {order.delivery_address?.street} - {order.delivery_address?.number}
                 </span>
-                <span className="text-sm text-gray-600">{formatRemaining(order.timeOutFinishesAt)}</span>
+                <span className="text-sm font-bold text-gray-600">{formatRemaining(order.timeOutFinishesAt)}</span>
+                </div>
               </div>
-              <div className="flex gap-3">
+              <div className="flex gap-3 ">
                 <button onClick={() => handleCallDelivery(order.id)} className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded mr-2">
                   Chamar delivery
                 </button>

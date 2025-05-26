@@ -10,7 +10,6 @@ const HealthIndicator: React.FC = () => {
   useEffect(() => {
     socket.on("health", (message: { health: boolean }) => {
       setIsHealthy(message.health);
-      console.log("⚡️ status de saúde recebido", message.health);
     });
     return () => {
       socket.off("health");

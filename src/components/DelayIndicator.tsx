@@ -23,12 +23,10 @@ export const DelayIndicator = () => {
     const closeModal = (e?:React.MouseEvent<HTMLDivElement> | React.ChangeEvent<HTMLInputElement>) => {
         e && e.stopPropagation();
         setIsModalOpen(false);
-        console.log(isModalOpen)
     }
     return (
-        <div className="flex items-center gap-2 bg-blue-200 p-3 rounded shadow hover:bg-gray-100 transition-colors duration-200 cursor-pointer"
+        <div className="flex  items-center gap-2 bg-blue-200 p-3 rounded shadow hover:bg-gray-100 transition-colors duration-200 cursor-pointer"
             onClick={() => {
-                console.log('click');
                 setIsModalOpen(true);
             }
             }>
