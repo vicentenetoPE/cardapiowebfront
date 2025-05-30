@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { httpClient } from "../config/httpClient";
-import { useSocket } from "../context/SocketContext";
+import { SocketContext, useSocket } from "../context/SocketContext";
 import { DetailedOrder } from "../types/detailedOrder";
 import { Placeholder } from "./Placeholder";
+import { useCompany } from "../context/CompanyContext";
+import { FormControl, InputLabel, Select, TextField } from "@mui/material";
 
 export interface Job {
   id: string;
@@ -15,17 +17,16 @@ export interface OrderQueuedInterface extends DetailedOrder {
   timeoutStatus: boolean;
   timeOutFinishesAt: string;
   callDriverStatus: "pending" | "success" | "canceled" | "error";
-
 }
 
 export const OpenedOrdersList: React.FC = () => {
   const socket = useSocket();
+  const companyContext = useCompany();
   const [orders, setOrders] = useState<OrderQueuedInterface[]>([]);
   const [now, setNow] = useState(() => Date.now());
 
   useEffect(() => {
     socket.on("new_order", (message: OrderQueuedInterface[]) => {
-      console.log("new_order", message);
       setOrders(message.reverse());
     });
 
@@ -74,33 +75,57 @@ export const OpenedOrdersList: React.FC = () => {
     } else {
       toast.error("Erro ao chamar o pedido");
     }
-  }
+  };
 
   return (
-    <div className="flex flex-col flex-1 bg-white p-6 shadow">
-      <header className="mb-6 text-center flex gap-2 items-center justify-center">
+    <div className="flex flex-col flex-1 bg-white p-6 shadow gap-4">
+      <header className="text-center flex gap-2 items-center justify-center">
         <h2 className="text-lg font-semibold">Pedidos em fila de entrega</h2>
         <span className="font-bold text-gray-400">{orders.length}</span>
       </header>
+      {/* Filtros */}
+      <div className="flex gap-4 justify-between items-center flex-col md:flex-row">
+        <TextField className="w-full md:flex-1" id="outlined-basic" label="Cliente" variant="outlined" />
+        <FormControl className="w-full md:w-[200px]">
+          <InputLabel id="status-select-label">Status</InputLabel>
+          <Select defaultValue={"all"} label="Status">
+            <option value="all">Todos</option>
+            <option value="pending">Pendentes</option>
+            <option value="delivered">Entregues</option>
+            <option value="canceled">Cancelados</option>
+          </Select>
+        </FormControl>
+      </div>
       {orders.length ? (
         <ul className="space-y-3 overflow-y-auto max-h-[calc(100vh-200px)]">
           {orders.map((order) => (
-            <li key={order.id} className="flex flex-col md:flex-row gap-4 items-center justify-between bg-white border-l-4 border-green-600 p-4 rounded shadow">
+            <li
+              key={order.id}
+              className="flex flex-col md:flex-row gap-4 items-center justify-between bg-white border-l-4 border-green-600 p-4 rounded shadow"
+            >
               <div className="w-full md:w-auto">
-                <span className="block font-semibold text-red-700">{order.customer?.name} <span className="text-blue-700">- R$ {order.total}</span></span>
-                <div className="flex md:flex-col justify-between md:justifiy-start">
-                <span className="block text-sm text-gray-600">
-                  {order.delivery_address?.street} - {order.delivery_address?.number}
+                <span className="block font-semibold text-red-700">
+                  {order.customer?.name} <span className="text-blue-700">- R$ {order.total}</span>
                 </span>
-                <span className="text-sm font-bold text-gray-600">{formatRemaining(order.timeOutFinishesAt)}</span>
+                <div className="flex md:flex-col justify-between md:justifiy-start">
+                  <span className="block text-sm text-gray-600">
+                    {order.delivery_address?.street} - {order.delivery_address?.number}
+                  </span>
+                  <span className="text-sm font-bold text-gray-600">{formatRemaining(order.timeOutFinishesAt)}</span>
                 </div>
               </div>
               <div className="flex gap-3 ">
-                <button onClick={() => handleCallDelivery(order.id)} className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded mr-2">
+                <button
+                  onClick={() => handleCallDelivery(order.id)}
+                  className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded mr-2"
+                >
                   Chamar delivery
                 </button>
 
-                <button onClick={() => handleCancel(order.id)} className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
+                <button
+                  onClick={() => handleCancel(order.id)}
+                  className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded"
+                >
                   Cancelar
                 </button>
               </div>

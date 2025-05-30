@@ -6,7 +6,7 @@ import TokenModal from "./modals/TokenModal";
 import HamburgerMenu from "./HamburgerMenu";
 import { DelayIndicator } from "./DelayIndicator";
 import { APISwitch } from "./APISwitch";
-//import { SelectCompany } from "./SelectCompany";
+import { SelectCompany } from "./SelectCompany";
 
 const Dashboard: React.FC = () => {
 
@@ -15,10 +15,10 @@ const Dashboard: React.FC = () => {
       <div className="flex md:items-center justify-between flex-col md:flex-row gap-4">
         <h1 className="flex !text-xl md:!text-3xl font-bold items-center gap-5">
           <HamburgerMenu />
-          Dashboard de Pedidos
+          <span className="hidden md:block">Dashboard de Pedidos</span>
+          <SelectCompany />
         </h1>
-        <div className="md:text-xl flex items-center gap-4 md:gap-10 ">
-          {/* <SelectCompany /> */}
+        <div className="md:text-xl flex items-center gap-4 md:gap-10 flex-wrap"> 
           <APISwitch />
           <DelayIndicator />
           <HealthIndicator />
