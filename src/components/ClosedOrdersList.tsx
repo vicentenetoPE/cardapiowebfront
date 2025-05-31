@@ -5,14 +5,20 @@ import { extractTime } from "../utils/extractTime";
 import { OrderQueuedInterface } from "./OpenedOrdersList";
 import { Placeholder } from "./Placeholder";
 import { OrderStatus } from "./OrderStatus";
-import { FormControl, InputLabel, Select, TextField } from "@mui/material";
+import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
+import { httpClient } from "../config/httpClient";
 
 const ClosedOrdersList: React.FC = () => {
   const [orders, setOrders] = React.useState<OrderQueuedInterface[]>([]);
+  const [statusFilter, setStatusFilter] = React.useState<string>("");
+  const [filteredOrders, setFilteredOrders] = React.useState<OrderQueuedInterface[]>([]);
   const socket = useSocket();
 
   useEffect(() => {
-    socket.on("unsucessfulOrder", (message: OrderQueuedInterface[]) => {
+    socket.on("unsucessfulOrder", async () => {
+      const res = await httpClient.get(`/orders/closed`);
+      const message: OrderQueuedInterface[] = res.data;
+      setFilteredOrders(message.reverse());
       setOrders(message.reverse());
     });
 
@@ -20,6 +26,17 @@ const ClosedOrdersList: React.FC = () => {
       socket.off("unsucessfulOrder");
     };
   }, [socket]);
+
+  const onChangeStatus = (e: SelectChangeEvent) => {
+    const status = e.target.value as string;
+    setStatusFilter(status);
+    if (status === "") {
+      setFilteredOrders(orders);
+    } else {
+      const filtered = orders.filter((order) => order.callDriverStatus === status);
+      setFilteredOrders(filtered);
+    }
+  };
 
   return (
     <div className="flex flex-col bg-white flex-1 rounded shadow p-6 gap-4">
@@ -31,11 +48,11 @@ const ClosedOrdersList: React.FC = () => {
         <TextField className="w-full md:flex-1" id="outlined-basic" label="Cliente" variant="outlined" />
         <FormControl className="w-full md:w-[200px]">
           <InputLabel id="status-select-label">Status</InputLabel>
-          <Select defaultValue={"all"} label="Status">
-            <option value="all">Todos</option>
-            <option value="pending">Pendentes</option>
-            <option value="delivered">Entregues</option>
-            <option value="canceled">Cancelados</option>
+          <Select onChange={onChangeStatus} defaultValue={""} label="Status">
+            <MenuItem value="">Todos</MenuItem>
+            <MenuItem value="success">Entregues</MenuItem>
+            <MenuItem value="canceled">Cancelados</MenuItem>
+            <MenuItem value="error">Erro</MenuItem>
           </Select>
         </FormControl>
       </div>

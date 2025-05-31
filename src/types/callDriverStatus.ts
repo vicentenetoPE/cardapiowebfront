@@ -1,0 +1,1 @@
+export type CallDriverStatus = "pending" | "success" | "canceled" | "error";

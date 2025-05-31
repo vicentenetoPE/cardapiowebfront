@@ -5,47 +5,34 @@ import { httpClient } from "../config/httpClient";
 
 interface CompanyContextProps {
   company: CompanyProfile | null;
-  setCompany: React.Dispatch<React.SetStateAction<CompanyProfile | null>>;
+  setCompany: (company: CompanyProfile | null) => void;
   availableCompanies: CompanyProfile[];
 }
 
 const CompanyContext = createContext<CompanyContextProps | undefined>(undefined);
 
 export const CompanyProvider = ({ children }: { children: ReactNode }) => {
-  const [availableCompanies, setAvailableCompanies] = React.useState<CompanyProfile[]>([]);
-  const [company, setCompany] = useState<CompanyProfile | null>(null);
+    const defaultCompanies: CompanyProfile[] = [
+       {
+      id: 8267,
+      name: "Dom Helder Pizzaria | Cachoeirinha",
+      url_name: "dom_helder_pizzaria__cachoeirinha",
+      neighborhood: "Cachoeirinha",
+      city: "Manaus",
+      logo: "https://storage.googleapis.com/prod-cardapio-web/uploads/company/logo/8267/2d138d82LOGO_-_2025.png",
+    },
+    {
+      id: 8268,
+      name: "Dom Helder Pizzaria | Aleixo",
+      url_name: "dom_helder_pizzaria__aleixo",
+      neighborhood: "Aleixo",
+      city: "Manaus",
+      logo: "https://storage.googleapis.com/prod-cardapio-web/uploads/company/logo/8268/3b74c144LOGO_-_2025.png",
+    },
+  ];
+  const [availableCompanies, setAvailableCompanies] = React.useState<CompanyProfile[]>(defaultCompanies);
+  const [company, setCompan] = useState<CompanyProfile | null>(defaultCompanies[0]);
   const socket = useContext(SocketContext);
-
-  useEffect(() => {
-    const fakedCompanies: CompanyProfile[] = [
-      {
-        id: 1,
-        name: "Empresa A",
-        logo: "https://placecats.com/300/200",
-        city: "São Paulo",
-        neighborhood: "Centro",
-        url_name: "empresa-a",
-      },
-      {
-        id: 2,
-        name: "Empresa B",
-        logo: "https://placecats.com/neo/300/200",
-        city: "Rio de Janeiro",
-        neighborhood: "Copacabana",
-        url_name: "empresa-b",
-      },
-      {
-        id: 3,
-        name: "Empresa C",
-        logo: "https://placecats.com/millie/300/150",
-        city: "Belo Horizonte",
-        neighborhood: "Savassi",
-        url_name: "empresa-c",
-      },
-    ];
-    setAvailableCompanies(fakedCompanies);
-    setCompany(fakedCompanies[0]);
-  }, []);
 
   useEffect(() => {
     getCompanies();
@@ -56,11 +43,18 @@ export const CompanyProvider = ({ children }: { children: ReactNode }) => {
     setAvailableCompanies(res.data);
   };
 
+  const setCompany = (company: CompanyProfile | null) => {
+    if (company) {
+      httpClient.defaults.headers.common["companyId"] = company.id.toString();
+      setCompan(company);
+    }
+  }
+
 
   useEffect(() => {
-      console.log("Empresa selecionada:", company);
     if (company) {
       socket.emit("changeCompany", company.id);
+      httpClient.defaults.headers.common["companyId"] = company.id.toString();
     }
   }, [company, socket]);
 

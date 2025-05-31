@@ -8,6 +8,3 @@ export interface Order {
     order_status: OrderStatus;
     created_at: string;
 }
-
-
-

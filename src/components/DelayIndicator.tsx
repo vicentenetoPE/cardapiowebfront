@@ -2,12 +2,14 @@ import React, { ChangeEvent, useEffect, useState } from 'react'
 import { useSocket } from '../context/SocketContext';
 import { httpClient } from '../config/httpClient';
 import { toast } from 'react-toastify';
+import { useCompany } from '../context/CompanyContext';
 
 export const DelayIndicator = () => {
     const [delay, setDelay] = React.useState(0);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const socket = useSocket();
+    const company= useCompany().company;
 
     useEffect(() => {
         socket.on("delay", (message) => {
@@ -18,7 +20,17 @@ export const DelayIndicator = () => {
             socket.off("delay");
         };
 
-    })
+    },[socket]);
+
+    useEffect(() => {
+        httpClient.get('/delay')
+            .then((response) => {
+                setDelay(response.data.delay);
+            })
+            .catch((error) => {
+                console.error("Erro ao buscar atraso:", error);
+            });
+    }, [company]);
 
     const closeModal = (e?:React.MouseEvent<HTMLDivElement> | React.ChangeEvent<HTMLInputElement>) => {
         e && e.stopPropagation();

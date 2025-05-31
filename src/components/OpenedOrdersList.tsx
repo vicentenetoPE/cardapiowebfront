@@ -24,9 +24,13 @@ export const OpenedOrdersList: React.FC = () => {
   const companyContext = useCompany();
   const [orders, setOrders] = useState<OrderQueuedInterface[]>([]);
   const [now, setNow] = useState(() => Date.now());
+  const [filteredOrders, setFilteredOrders] = useState<OrderQueuedInterface[]>([]);
 
   useEffect(() => {
-    socket.on("new_order", (message: OrderQueuedInterface[]) => {
+    socket.on("new_order", async() => {
+      const res = await httpClient.get(`/orders/opened`);
+      const message: OrderQueuedInterface[] = res.data;
+      setFilteredOrders(message.reverse());
       setOrders(message.reverse());
     });
 
@@ -77,6 +81,18 @@ export const OpenedOrdersList: React.FC = () => {
     }
   };
 
+
+  const onFilterChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    const filterValue = event.target.value as string;
+    console.log("Filter value:", filterValue);
+    if (!filterValue) {
+      setFilteredOrders(orders);
+    } else {
+      const filtered = orders.filter((order) => order.customer?.name.toLowerCase().includes(filterValue.toLowerCase()));
+      setFilteredOrders(filtered);
+    }
+  }
+
   return (
     <div className="flex flex-col flex-1 bg-white p-6 shadow gap-4">
       <header className="text-center flex gap-2 items-center justify-center">
@@ -85,16 +101,7 @@ export const OpenedOrdersList: React.FC = () => {
       </header>
       {/* Filtros */}
       <div className="flex gap-4 justify-between items-center flex-col md:flex-row">
-        <TextField className="w-full md:flex-1" id="outlined-basic" label="Cliente" variant="outlined" />
-        <FormControl className="w-full md:w-[200px]">
-          <InputLabel id="status-select-label">Status</InputLabel>
-          <Select defaultValue={"all"} label="Status">
-            <option value="all">Todos</option>
-            <option value="pending">Pendentes</option>
-            <option value="delivered">Entregues</option>
-            <option value="canceled">Cancelados</option>
-          </Select>
-        </FormControl>
+        <TextField onChange={onFilterChange} className="w-full md:flex-1" id="outlined-basic" label="Cliente" variant="outlined" />
       </div>
       {orders.length ? (
         <ul className="space-y-3 overflow-y-auto max-h-[calc(100vh-200px)]">

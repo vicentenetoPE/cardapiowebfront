@@ -6,7 +6,7 @@ import { useCompany } from "../context/CompanyContext";
 
 export const SelectCompany = () => {
     const companyContext = useCompany();
-    const [selectedCompanyId, setSelectedCompanyId] = useState<string>("");
+    const [selectedCompanyId, setSelectedCompanyId] = useState<string>(companyContext.company?.id.toString() || "");
 
     const onChangeCompany = (event: SelectChangeEvent) => {
         const selectedId = event.target.value as string;
