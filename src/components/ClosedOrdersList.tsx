@@ -36,10 +36,10 @@ const ClosedOrdersList: React.FC = () => {
               <div className="w-full flex justify-between">
                 <div className="flex flex-col">
                   <span className="block font-semibold text-red-700">
-                    {order.customer?.name} <span className="text-blue-700">- R$ {order.total}</span>
+                    {order.client?.name} <span className="text-blue-700">- R$ {order.total}</span>
                   </span>
                 <span className="block text-sm text-gray-600">
-                  {order.delivery_address?.street} - {order.delivery_address?.number}
+                  {order.delivery_address?.street} - {order.delivery_address?.house_number}
                 </span>
                 </div>
                 <div className="flex flex-col items-center">
