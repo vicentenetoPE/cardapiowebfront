@@ -1,6 +1,6 @@
 export interface DeliveryAddress {
     street: string;
-    number: string | null;
+    house_number: string | null;
     address_block: string | null;
     address_lot: string | null;
     neighborhood: string;

@@ -29,7 +29,7 @@ export interface DetailedOrder {
   created_at: string;
   updated_at: string;
   schedule: string | null;
-  customer: Customer | null;
+  client: Customer | null;
   delivery_address: DeliveryAddress | null;
   items: OrderItem[];
   discounts: any[];

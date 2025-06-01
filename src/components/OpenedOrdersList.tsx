@@ -87,10 +87,10 @@ export const OpenedOrdersList: React.FC = () => {
           {orders.map((order) => (
             <li key={order.id} className="flex flex-col md:flex-row gap-4 items-center justify-between bg-white border-l-4 border-green-600 p-4 rounded shadow">
               <div className="w-full md:w-auto">
-                <span className="block font-semibold text-red-700">{order.customer?.name} <span className="text-blue-700">- R$ {order.total}</span></span>
+                <span className="block font-semibold text-red-700">{order.client?.name} <span className="text-blue-700">- R$ {order.total}</span></span>
                 <div className="flex md:flex-col justify-between md:justifiy-start">
                 <span className="block text-sm text-gray-600">
-                  {order.delivery_address?.street} - {order.delivery_address?.number}
+                  {order.delivery_address?.street} - {order.delivery_address?.house_number}
                 </span>
                 <span className="text-sm font-bold text-gray-600">{formatRemaining(order.timeOutFinishesAt)}</span>
                 </div>
